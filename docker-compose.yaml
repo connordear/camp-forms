@@ -1,0 +1,48 @@
+services:
+  api:
+    build:
+      context: ./apps/api/server # Path relative to the root
+      dockerfile: Dockerfile
+      target: development # Example target stage
+    environment:
+      - SERVER_PORT=8080
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      PGUSER: $DB_USER
+      POSTGRES_USER: $DB_USER
+      POSTGRES_PASSWORD: $DB_PASSWORD
+    ports:
+      - 5432:5432
+    volumes:
+      - db-data:/var/lib/postgresql/data # Persistent volume
+      - ./db:/docker-entrypoint-initdb.d # init scripts
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4:latest
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=$PGADMIN_MAIL 
+      - PGADMIN_DEFAULT_PASSWORD=$PGADMIN_PW
+    ports:
+      - "5050:80"
+    restart: always
+
+ # frontend:
+ #   build:
+ #     context: ./apps/frontend # Path relative to the root
+ #     dockerfile: Dockerfile
+ #     target: development # Example target stage
+volumes:
+  db-init:
+  db-data:

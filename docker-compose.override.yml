@@ -1,0 +1,21 @@
+# docker-compose.override
+services:
+  api:
+    # Build using the Dockerfile in ./apps/api, targeting the 'development' stage
+    build:
+      context: ./apps/api/server
+      target: development
+      dockerfile: Dockerfile
+    # Override command to use 'air' for live reload
+    command: ["air"]
+    volumes:
+      # Mount local source code into the container
+      - ./apps/api/server:/app
+    ports:
+      - $SERVER_PORT:$SERVER_PORT
+    environment:
+      # Override/add environment variables for development
+      - SERVER_PORT=$SERVER_PORT
+      - DATABASE_URL=postgresql://$DB_USER:$DB_PASSWORD@db/postgres?sslmode=disable # Use dev password
+
+
