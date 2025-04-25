@@ -17,7 +17,7 @@ func healthCheck(w http.ResponseWriter, r *http.Request) {
 	log.Println("HealthChecking!")
 	b, err := json.Marshal(HealthData{Timestamp: 2})
 	if err != nil {
-		log.Fatalf("Unable to marchal to to %s\n", err)
+		log.Fatalf("Unable to marshal to to %s\n", err)
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(b)
