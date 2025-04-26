@@ -3,12 +3,11 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"github.com/jackc/pgx/v5"
 	"log"
 	"net/http"
 	"os"
 	"server/middleware"
-
-	"github.com/jackc/pgx/v5"
 )
 
 var PORT = ":" + string(os.Getenv("SERVER_PORT"))
@@ -39,6 +38,8 @@ func getCamps(w http.ResponseWriter, r *http.Request) {
 	if jsonErr != nil {
 		log.Fatal(jsonErr)
 	}
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
 	w.Write(campJson)
 
 	defer rows.Close()
